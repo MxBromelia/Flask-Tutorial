@@ -3,7 +3,7 @@ venv/
 *.pyc
 __pycache__/
 
-instance/
+instance/*
 
 .pytest_cache/
 .coverage
@@ -14,3 +14,5 @@ build/
 *.egg-info/
 
 *.sqlite
+
+.vscode/
