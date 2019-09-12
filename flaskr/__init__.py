@@ -38,14 +38,19 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
-    from . import auth
+    from . import auth, blog
     # app.register_blueprint -> Inserir Blueprint à Aplicação. <ais em:
     # https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.register_blueprint
     app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
+    # Definir um enpoint para blog.index, de modo que tanto 'index' quanto
+    # 'blog.index' funcionem, gerando a mesma URL
+    app.add_url_rule('/', endpoint='index')
 
     # a simple page that says hello
     @app.route('/hello')
     def hello():
+        """Hello, World"""
         return 'Hello, World!'
 
     return app

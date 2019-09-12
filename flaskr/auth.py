@@ -11,6 +11,7 @@ from flaskr.db import get_db
 # códigos. Em vez de registrar views o outros códigos diretamente com uma
 # aplicação, elas são registradas com uma Blueprint. Esta, então, é registrada
 # na aplicação, quando está disponível na função de Factory.
+#   url_prefix -> define o caminho que será posto ao início da url.
 # mais em: https://flask.palletsprojects.com/en/1.1.x/api/#flask.Blueprint
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
