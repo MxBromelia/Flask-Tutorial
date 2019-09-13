@@ -4,7 +4,9 @@ from flask import (
 from werkzeug.exceptions import abort
 
 from flaskr.auth import login_required
-from flaskr.schema import DB, Post, User
+from flaskr.schema import DB
+from flaskr.schema.post import Post
+from flaskr.schema.user import User
 
 # Como não há url_prefix definido, a view 'index' será adicionada em '/',
 # 'create' em 'create', e assim sucessivamente.

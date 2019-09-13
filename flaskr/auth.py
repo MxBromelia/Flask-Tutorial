@@ -4,7 +4,8 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.schema import DB, User
+from flaskr.schema import DB
+from flaskr.schema.user import User
 
 # Blueprint -> um modo de organizar um grupo de views relacionadas e outros
 # códigos. Em vez de registrar views o outros códigos diretamente com uma
