@@ -21,9 +21,9 @@ def index():
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
 
+# @login_reuired -> Chama função login_required que encapsula view e checa a
+# autenticação do usuário
 @bp.route('/create', methods=('GET', 'POST'))
-# Chama função login_required que encapsula view e checa a autenticação do
-# usuário
 @login_required
 def create():
     """Criar novo post"""
@@ -49,11 +49,18 @@ def create():
 
     return render_template('blog/create.html')
 
-@bp.route('/<int:user_id>/update', methods=('GET', 'POST'))
+@bp.route('/<int:post_id>', methods=('GET',))
+def read(post_id):
+    """Visualizar um post"""
+    post = get_post(post_id, check_author=False)
+
+    return render_template('blog/read.html', post=post)
+
+@bp.route('/<int:post_id>/update', methods=('GET', 'POST'))
 @login_required
-def update(user_id):
+def update(post_id):
     """Atualizar um post"""
-    post = get_post(user_id)
+    post = get_post(post_id)
 
     if request.method == 'POST':
         title = request.form['title']
@@ -70,20 +77,20 @@ def update(user_id):
             database.execute(
                 'UPDATE post SET title = ?, body = ?'
                 ' WHERE id = ?',
-                (title, body, user_id)
+                (title, body, post_id)
             )
             database.commit()
             return redirect(url_for('blog.index'))
 
     return render_template('blog/update.html', post=post)
 
-@bp.route('/<int:user_id>/delete', methods=('POST',))
+@bp.route('/<int:post_id>/delete', methods=('POST',))
 @login_required
-def delete(user_id):
+def delete(post_id):
     """Remover uma postagem"""
-    get_post(user_id)
+    get_post(post_id)
     database = get_db()
-    database.execute('DELETE FROM post WHERE id = ?', (user_id,))
+    database.execute('DELETE FROM post WHERE id = ?', (post_id,))
     database.commit()
     return redirect(url_for('blog.index'))
 
@@ -92,18 +99,18 @@ def delete(user_id):
 # check_author: Checa se usuário é o autor do post.
 #   Verdadeiro para update/delete
 #   False para show
-def get_post(user_id, check_author=True):
+def get_post(post_id, check_author=True):
     """Busca pelo post pelo seu id."""
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = ?',
-        (user_id,)
+        (post_id,)
     ).fetchone()
 
     # Caso não exista um post com este ID, Erro 404
     if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(user_id))
+        abort(404, "Post id {0} doesn't exist.".format(post_id))
 
     # Caso o usuário não é o mesmo que publicou originalmente o post, Erro 403
     if check_author and post['author_id'] != g.user['id']:
