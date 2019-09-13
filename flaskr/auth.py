@@ -4,8 +4,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
-from flaskr.db import get_db
+from flaskr.schema import DB, User
 
 # Blueprint -> um modo de organizar um grupo de views relacionadas e outros
 # códigos. Em vez de registrar views o outros códigos diretamente com uma
@@ -29,9 +28,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        g.user = DB.session.query(User).get(user_id)
 
 # route: /auth/register
 @bp.route('/register', methods=('GET', 'POST'))
@@ -40,7 +37,6 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        database = get_db()
         error = None
 
         # Validar se username não está vazio
@@ -50,9 +46,7 @@ def register():
         elif not password:
             error = 'Password is required.'
         # Validar se login é inédito
-        elif database.execute(
-            'SELECT id FROM user WHERE username = ?', (username,)
-        ).fetchone() is not None:
+        elif DB.session.query(User).filter_by(username=username).first() is not None:
             error = 'User {} is already registered.'.format(username)
 
         # Insere novo usuário no banco de dados
@@ -60,12 +54,13 @@ def register():
         # generate_password_hash -> retorna hash da senha. mais em:
         # https://werkzeug.palletsprojects.com/en/0.15.x/utils/#werkzeug.security.generate_password_hash
         if error is None:
-            database.execute(
-                'INSERT INTO user (username, password) VALUES (?, ?)',
-                (username, generate_password_hash(password))
-            )
+            psd_hash = generate_password_hash(password)
+            new_user = User(username=username, password=psd_hash)
+            DB.session.add(new_user)
+
             # Salva as alterações no banco feitas pela função
-            database.commit()
+            # database.commit()
+            DB.session.commit()
             # url_for -> gera a url relacionada à rota definida
             # mais em: https://flask.palletsprojects.com/en/1.1.x/api/#flask.url_for
             return redirect(url_for('auth.login'))
@@ -90,20 +85,21 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        database = get_db()
         error = None
         # procura no banco de dados o username informado
-        user = database.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+        user = DB.session.query(User).filter_by(username=username).first()
 
         # Valida se há um usuário com este username
+        # if user is None:
         if user is None:
             error = 'Incorrect username.'
         # Valida se a senha informada é a senha de usuário
-        # check_password_hash -> compara os hashes de senhas informados. mais em:
+        # check_password_hash -> compara os hashes de senhas informados.
+        # mais em:
         # https://werkzeug.palletsprojects.com/en/0.15.x/utils/#werkzeug.security.check_password_hash
-        elif not check_password_hash(user['password'], password):
+
+        elif not check_password_hash(user.password, password):
+            # elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
 
         if error is None:
@@ -112,7 +108,8 @@ def login():
             # https://flask.palletsprojects.com/en/1.1.x/api/#flask.session
             session.clear()
             # armazena user_id como um cookie
-            session['user_id'] = user['id']
+            # session['user_id'] = user['id']
+            session['user_id'] = user.id
             return redirect(url_for('index'))
 
         # Se acontecer algo de errado na autenticação do usuário, informar ao
@@ -123,7 +120,7 @@ def login():
     # autenticação deve ser mostrado
     return render_template('auth/login.html')
 
-#path: /auth/logout
+# ath: /auth/logout
 @bp.route('/logout')
 def logout():
     """Encerra a sessão do usuário atual"""
@@ -141,6 +138,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
+            # if g.user is None:
             return redirect(url_for('auth.login'))
 
         return view(**kwargs)

@@ -18,6 +18,7 @@ def create_app(test_config=None):
         # Caminho em que o DB SQLite será salvo
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+    app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///db.sqlite'
 
     # app.config.from_pyfile() -> Sobrescreve as configurações padrões com
     # valores de config.py presente no diretório de instância, caso esteja
@@ -35,8 +36,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import db
-    db.init_app(app)
+    from . import schema
+    schema.init_app(app)
 
     from . import auth, blog
     # app.register_blueprint -> Inserir Blueprint à Aplicação. <ais em:
