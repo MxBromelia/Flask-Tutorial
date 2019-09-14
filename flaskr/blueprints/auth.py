@@ -100,7 +100,6 @@ def login():
         # https://werkzeug.palletsprojects.com/en/0.15.x/utils/#werkzeug.security.check_password_hash
 
         elif not check_password_hash(user.password, password):
-            # elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
 
         if error is None:

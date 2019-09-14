@@ -16,7 +16,6 @@ def create_app(test_config=None):
         # mais: https://flask.palletsprojects.com/en/1.1.x/config/#SECRET_KEY
         SECRET_KEY='dev',
         # Caminho em que o DB SQLite será salvo
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
     app.config['SQLALCHEMY_DATABASE_URI'] = r'sqlite:///db.sqlite'
 
@@ -37,6 +36,7 @@ def create_app(test_config=None):
         pass
 
     from . import schema
+    from .schema import user, post
     schema.init_app(app)
 
     from .blueprints import auth, blog, author
