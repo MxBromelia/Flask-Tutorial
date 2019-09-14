@@ -25,18 +25,11 @@ def index():
 def create():
     """Criar novo post"""
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
+        req = validate_post_form(request)
 
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-        else:
+        if g.error is None:
             author = DB.session.query(User).get(g.user.id)
-            new_post = Post(title=title, body=body, author=author)
+            new_post = Post(title=req['title'], body=req['body'], author=author)
             DB.session.add(new_post)
             DB.session.commit()
             return redirect(url_for('blog.index'))
@@ -56,18 +49,11 @@ def update(post_id):
     post = get_post(post_id)
 
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
+        req = validate_post_form(request)
 
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-        else:
-            post.title = title
-            post.body = body
+        if g.error is None:
+            post.title = req['title']
+            post.body = req['body']
             DB.session.commit()
             return redirect(url_for('blog.index'))
 
@@ -104,3 +90,19 @@ def get_post(post_id, check_author=True):
     # mais em: https://flask.palletsprojects.com/en/1.1.x/api/#flask.abort
 
     return post
+
+def validate_post_form(request):
+    title = request.form['title']
+    body = request.form['body']
+    g.error = None
+
+    if not title:
+        g.error = 'Title is required.'
+    elif not body:
+        g.error = 'Body is required.'
+
+    if g.error is not None:
+        flash(g.error)
+        return None
+    else:
+        return {'title': title, 'body': body}
