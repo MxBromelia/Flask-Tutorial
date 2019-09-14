@@ -41,13 +41,12 @@ def create():
             DB.session.commit()
             return redirect(url_for('blog.index'))
 
-    return render_template('blog/create.html')
+    return render_template('blog/create.html', post=None)
 
 @bp.route('/<int:post_id>', methods=('GET',))
 def read(post_id):
     """Visualizar um post"""
     post = get_post(post_id, check_author=False)
-
     return render_template('blog/read.html', post=post)
 
 @bp.route('/<int:post_id>/update', methods=('GET', 'POST'))

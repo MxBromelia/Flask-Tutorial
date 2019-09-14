@@ -131,7 +131,7 @@ def logout():
     return redirect(url_for('index'))
 
 def login_required(view):
-    # Este decorator retorna uma nove função de view que encapsula a view
+    # Este decorator retorna uma nova função de view que encapsula a view
     # original que é recebida. A nova função verifica se um usuário está
     # autenticado, redirecionando para a página de login caso contrário.
     # Se um usuário está carregado a view é chamada e continua normalmente.
