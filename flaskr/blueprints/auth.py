@@ -109,7 +109,6 @@ def login():
             # https://flask.palletsprojects.com/en/1.1.x/api/#flask.session
             session.clear()
             # armazena user_id como um cookie
-            # session['user_id'] = user['id']
             session['user_id'] = user.id
             return redirect(url_for('index'))
 
@@ -139,7 +138,6 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            # if g.user is None:
             return redirect(url_for('auth.login'))
 
         return view(**kwargs)

@@ -1,11 +1,10 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, render_template
+    # flash, g, redirect, request, url_for
 )
 from werkzeug.exceptions import abort
 
-# from flaskr.auth import login_required
 from flaskr.schema import DB
-# from flaskr.schema.post import Post
 from flaskr.schema.user import User
 
 bp = Blueprint('author', __name__, url_prefix='/author')

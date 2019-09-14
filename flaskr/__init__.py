@@ -39,7 +39,7 @@ def create_app(test_config=None):
     from . import schema
     schema.init_app(app)
 
-    from . import auth, blog, author
+    from .blueprints import auth, blog, author
     # app.register_blueprint -> Inserir Blueprint à Aplicação. <ais em:
     # https://flask.palletsprojects.com/en/1.1.x/api/#flask.Flask.register_blueprint
     app.register_blueprint(auth.bp)
