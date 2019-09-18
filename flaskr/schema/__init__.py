@@ -1,6 +1,6 @@
 """DB Package"""
 from flask_sqlalchemy import SQLAlchemy
-from . import *
+# from . import *
 
 DB = SQLAlchemy()
 
@@ -10,8 +10,6 @@ def init_app(app):
 
 def init_db(app):
     """Create Schema"""
-    # import flaskr.schema.post
-    # import flaskr.schema.user
     with app.app_context():
         DB.create_all()
 
