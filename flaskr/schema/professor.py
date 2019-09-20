@@ -9,7 +9,7 @@ class Professor(Usuario):
     )
     admin = DB.Column(DB.Boolean, nullable=False, default=False)
 
-    area = DB.relationship('AreaConcetracao')
+    area = DB.relationship('AreaConcentracao')
     artigos = DB.relationship('Revisao', lazy=False)
 
     __mapper_args__ = {

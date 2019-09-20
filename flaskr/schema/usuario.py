@@ -16,6 +16,12 @@ class Usuario(DB.Model):
         'polymorphic_on': 'tipo'
     }
 
+    def admin(self):
+        if self.tipo == 'professor' and self.admin is True:
+            return True
+        else:
+            return False
+
     def __repr__(self):
         return '< Usuario %s >' % self.login
 

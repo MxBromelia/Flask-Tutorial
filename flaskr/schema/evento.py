@@ -13,7 +13,7 @@ class Evento(DB.Model):
         DB.Integer, DB.ForeignKey('area_concentracao.id'), nullable=False
     )
 
-    area = DB.relationship('AreaConcentracao', lazy=False)
+    area = DB.relationship('AreaConcentracao', lazy=False, uselist=False)
     palavras_chave = DB.relationship(
         'PalavraChave', secondary=palavra_chave_evento, lazy=False
     )

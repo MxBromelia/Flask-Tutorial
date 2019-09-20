@@ -16,7 +16,7 @@ class Artigo(DB.Model):
     usuario_publicador = DB.relationship('Usuario', lazy=True, uselist=False)
     autores = DB.relationship('Autor', secondary=autor_artigo, lazy=True)
     revisao = DB.relationship('Revisao', lazy=False, uselist=False)
-    evento = DB.relationship('Artigo', lazy=True, uselist=False)
+    evento = DB.relationship('Evento', lazy=True, uselist=False)
 
     def __repr__(self):
         return '< Artigo %d >' % self.id

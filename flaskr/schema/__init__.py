@@ -1,6 +1,9 @@
 """DB Package"""
 from flask_sqlalchemy import SQLAlchemy
-# from . import *
+__all__ = (
+    'aluno', 'area_concentracao', 'artigo', 'autor', 'evento', 'palavra_chave',
+    'professor', 'relacionamentos', 'revisao', 'usuario'
+)
 
 DB = SQLAlchemy()
 
